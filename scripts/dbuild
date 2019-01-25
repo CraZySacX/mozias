@@ -2,7 +2,8 @@
 import argparse
 import errno
 import os
-from shutil import copy, copytree, rmtree
+from pathlib import Path, PurePath
+from shutil import copy2, copytree, rmtree
 from os import environ
 from subprocess import check_call
 
@@ -13,7 +14,7 @@ owd = os.getcwd()
 parser = argparse.ArgumentParser(description='Build project Docker images')
 parser.add_argument('-c', '--clean', help='Clean up build artifacts', action='store_true')
 parser.add_argument('-n', '--nginx', help='Turn off nginx build', action='store_true')
-# parser.add_argument('-d', '--dataq', help='Turn off dataq build', action="store_true")
+parser.add_argument('-d', '--dataq', help='Turn off dataq build', action="store_true")
 
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -21,21 +22,60 @@ args = parser.parse_args()
 # Change working directory
 os.chdir(os.path.join(os.path.dirname( __file__ ), '..' ))
 
-if not args.nginx:
-  print('Cleaning mozias-client artifacts')
-  rmtree('mozias-client/dist')
-  print('Building mozias nginx image')
-  cwd = os.getcwd()
+def clean_api( cwd ):
+  "Clean the mozias-api artifacts"
+  print("Clean the mozias-api artifacts")
+  os.chdir('mozias-api')
+  check_call(["cargo", "clean"])
+  os.chdir(cwd)
+  return
+
+def clean_client( cwd ):
+  "Clean the mozias-client artifacts"
+  print("Clean the mozias-client artifacts")
   os.chdir('mozias-client')
-  copytree('src/static', 'dist')
-  os.makedirs('dist/js')
+  rmdir(Path('dist'))
+  os.chdir(cwd)
+  return
+
+def rmdir( path ):
+  if path.exists():
+    for child in path.iterdir():
+      if child.is_file():
+        child.unlink()
+      elif child.is_dir():
+        rmdir(child)
+    path.rmdir()
+  return
+
+if args.clean:
+  cwd = os.getcwd()
+  clean_client(cwd)
+  clean_api(cwd)
+
+if not args.nginx:
+  cwd = os.getcwd()
+  print("Building 'mozias-nginx' image")
+  os.chdir('mozias-client')
+  print("Creating 'dist' directory")
+  Path('dist/js').mkdir(parents=True, exist_ok=True)
+  p = Path('src/static')
+  for child in p.iterdir():
+    c = PurePath('src/static', child.name)
+    print(f"Copying {c} to 'dist'")
+    copy2(c, 'dist')
+  print("Building 'app.js'")
   check_call(["elm", "make", "src/Main.elm", "--output=./dist/js/app.js", "--optimize"])
   os.chdir(cwd)
+  print("Building docker image")
   check_call(["docker", "build", "-t", "mozias/nginx", "-f", "Dockerfile.nginx", "."])
 
-# if not args.dataq:
-#   print('Building DataQ image')
-#   check_call(["docker", "build", "-t", "eozias/eozias-api", "-f", "Dockerfile.dataq", "."])
+if not args.dataq:
+  print("Building 'mozias-api' image")
+  cwd = os.getcwd()
+  os.chdir('mozias-api')
+  print("Building docker image")
+  check_call(["docker", "build", "-t", "mozias/mozias-api", "-f", "../Dockerfile.api", "."])
 
 # Change back to the original directory
 os.chdir(owd)
