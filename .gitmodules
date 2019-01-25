@@ -1,0 +1,6 @@
+[submodule "mozias-client"]
+	path = mozias-client
+	url = git@github.com:CraZySacX/mozias-client.git
+[submodule "mozias-api"]
+	path = mozias-api
+	url = git@github.com:CraZySacX/mozias-api.git

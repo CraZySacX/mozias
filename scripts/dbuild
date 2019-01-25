@@ -1,0 +1,41 @@
+#!/usr/bin/python3
+import argparse
+import errno
+import os
+from shutil import copy, copytree, rmtree
+from os import environ
+from subprocess import check_call
+
+# Store the current directory
+owd = os.getcwd()
+
+# Setup the supported command-line arguments
+parser = argparse.ArgumentParser(description='Build project Docker images')
+parser.add_argument('-c', '--clean', help='Clean up build artifacts', action='store_true')
+parser.add_argument('-n', '--nginx', help='Turn off nginx build', action='store_true')
+# parser.add_argument('-d', '--dataq', help='Turn off dataq build', action="store_true")
+
+# Parse the command-line arguments
+args = parser.parse_args()
+
+# Change working directory
+os.chdir(os.path.join(os.path.dirname( __file__ ), '..' ))
+
+if not args.nginx:
+  print('Cleaning mozias-client artifacts')
+  rmtree('mozias-client/dist')
+  print('Building mozias nginx image')
+  cwd = os.getcwd()
+  os.chdir('mozias-client')
+  copytree('src/static', 'dist')
+  os.makedirs('dist/js')
+  check_call(["elm", "make", "src/Main.elm", "--output=./dist/js/app.js", "--optimize"])
+  os.chdir(cwd)
+  check_call(["docker", "build", "-t", "mozias/nginx", "-f", "Dockerfile.nginx", "."])
+
+# if not args.dataq:
+#   print('Building DataQ image')
+#   check_call(["docker", "build", "-t", "eozias/eozias-api", "-f", "Dockerfile.dataq", "."])
+
+# Change back to the original directory
+os.chdir(owd)
