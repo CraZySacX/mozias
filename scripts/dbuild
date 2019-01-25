@@ -14,7 +14,7 @@ owd = os.getcwd()
 parser = argparse.ArgumentParser(description='Build project Docker images')
 parser.add_argument('-c', '--clean', help='Clean up build artifacts', action='store_true')
 parser.add_argument('-n', '--nginx', help='Turn off nginx build', action='store_true')
-parser.add_argument('-d', '--dataq', help='Turn off dataq build', action="store_true")
+parser.add_argument('-a', '--api', help='Turn off api build', action="store_true")
 
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -70,7 +70,7 @@ if not args.nginx:
   print("Building docker image")
   check_call(["docker", "build", "-t", "mozias/nginx", "-f", "Dockerfile.nginx", "."])
 
-if not args.dataq:
+if not args.api:
   print("Building 'mozias-api' image")
   cwd = os.getcwd()
   os.chdir('mozias-api')
