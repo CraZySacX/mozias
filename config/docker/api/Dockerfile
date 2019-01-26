@@ -14,4 +14,4 @@ COPY --from=builder \
     /home/rust/src/Rocket.toml \
     /
 EXPOSE 8000
-CMD ["/opt/dataq/bin/mozias-api"]
+CMD ["/opt/mozias-api/bin/mozias-api"]

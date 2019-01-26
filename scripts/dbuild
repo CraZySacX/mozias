@@ -68,14 +68,14 @@ if not args.nginx:
   check_call(["elm", "make", "src/Main.elm", "--output=./dist/js/app.js", "--optimize"])
   os.chdir(cwd)
   print("Building docker image")
-  check_call(["docker", "build", "-t", "mozias/nginx", "-f", "Dockerfile.nginx", "."])
+  check_call(["docker", "build", "-t", "mozias/nginx", "-f", "config/docker/nginx/Dockerfile", "."])
 
 if not args.api:
   print("Building 'mozias-api' image")
   cwd = os.getcwd()
   os.chdir('mozias-api')
   print("Building docker image")
-  check_call(["docker", "build", "-t", "mozias/mozias-api", "-f", "../Dockerfile.api", "."])
+  check_call(["docker", "build", "-t", "mozias/mozias-api", "-f", "../config/docker/api/Dockerfile", "."])
 
 # Change back to the original directory
 os.chdir(owd)

@@ -2,3 +2,7 @@
 **/*.rs.bk
 dhparam-*.pem
 start.js
+.mozias/
+.gitsecret/keys/random_seed
+database.sql
+*.kbx~
