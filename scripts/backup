@@ -5,5 +5,5 @@ if set -q MYSQL_ROOT_PASSWORD
     dm ssh mozias "sudo docker exec mozias_mozias_db_1 sh -c 'exec mysqldump --databases moziasdb -uroot -p$MYSQL_ROOT_PASSWORD'" >config/db/database.sql
     echo "Backup created"
 else
-    echo "Unable to determine root password!"
+    echo "Unable to determine root password!  You may need to set an environment variable"
 end

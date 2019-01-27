@@ -9,6 +9,8 @@ services:
   mozias_api:
     image: mozias/mozias-api:latest
     env_file: ./config/api/mozias-api.env
+    links:
+      - mozias_db
   nginx:
     image: mozias/nginx:latest
     volumes:
