@@ -1,0 +1,9 @@
+#!/usr/bin/fish
+if set -q MYSQL_ROOT_PASSWORD
+    eval (dm env mozias)
+    echo "Connecting to machine to create backup..."
+    dm ssh mozias "sudo docker exec mozias_mozias_db_1 sh -c 'exec mysqldump --databases moziasdb -uroot -p$MYSQL_ROOT_PASSWORD'" >config/db/database.sql
+    echo "Backup created"
+else
+    echo "Unable to determine root password!"
+end

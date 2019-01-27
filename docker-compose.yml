@@ -8,7 +8,7 @@ volumes:
 services:
   mozias_api:
     image: mozias/mozias-api:latest
-    env_file: ./.mozias/mozias-api.env
+    env_file: ./config/api/mozias-api.env
   nginx:
     image: mozias/nginx:latest
     volumes:
@@ -23,6 +23,6 @@ services:
     image: mozias/mozias-db:latest
     ports:
       - "3306:3306"
-    env_file: ./.mozias/mozias-db.env
+    env_file: ./config/db/mozias-db.env
     volumes:
       - moziasdb:/var/lib/mysql

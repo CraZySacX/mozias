@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser(description='Build project Docker images')
 parser.add_argument('-c', '--clean', help='Clean up build artifacts', action='store_true')
 parser.add_argument('-n', '--nginx', help='Turn off nginx build', action='store_true')
 parser.add_argument('-a', '--api', help='Turn off api build', action="store_true")
+parser.add_argument('-d', '--db', help='Turn off db build', action="store_true")
 
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -76,6 +77,11 @@ if not args.api:
   os.chdir('mozias-api')
   print("Building docker image")
   check_call(["docker", "build", "-t", "mozias/mozias-api", "-f", "../config/docker/api/Dockerfile", "."])
+  os.chdir(cwd)
+
+if not args.db:
+  print("Building 'mozias-db' image")
+  check_call(["docker", "build", "-t", "mozias/mozias-db", "-f", "config/docker/db/Dockerfile", "."])
 
 # Change back to the original directory
 os.chdir(owd)

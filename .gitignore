@@ -6,3 +6,5 @@ start.js
 .gitsecret/keys/random_seed
 database.sql
 *.kbx~
+mozias-db.env
+mozias-api.env

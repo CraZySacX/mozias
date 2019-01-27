@@ -9,8 +9,9 @@ owd = os.getcwd()
 
 # Setup the supported command-line arguments
 parser = argparse.ArgumentParser(description='Push project Docker images')
-parser.add_argument('-n', '--nginx', help='Turn off nginx build', action="store_true")
-parser.add_argument('-a', '--api', help='Turn off api build', action="store_true")
+parser.add_argument('-n', '--nginx', help='Turn off nginx push', action="store_true")
+parser.add_argument('-a', '--api', help='Turn off api push', action="store_true")
+parser.add_argument('-d', '--db', help='Turn off db push', action="store_true")
 
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -25,6 +26,10 @@ if not args.nginx:
 if not args.api:
   print('Pushing mozias api image')
   check_call(["docker", "push", "mozias/mozias-api"])
+
+if not args.db:
+  print('Pushing mozias db image')
+  check_call(["docker", "push", "mozias/mozias-db"])
 
 # Change back to the original directory
 os.chdir(owd)
