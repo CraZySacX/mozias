@@ -66,7 +66,7 @@ if not args.nginx:
     print(f"Copying {c} to 'dist'")
     copy2(c, 'dist')
   print("Building 'app.js'")
-  check_call(["elm", "make", "src/Main.elm", "--output=./dist/js/app.js", "--optimize"])
+  check_call(["elm", "make", "src/Main.elm", "--output=./dist/js/app.js"])
   os.chdir(cwd)
   print("Building docker image")
   check_call(["docker", "build", "-t", "mozias/nginx", "-f", "config/docker/nginx/Dockerfile", "."])
