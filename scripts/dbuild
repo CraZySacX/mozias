@@ -49,6 +49,18 @@ def rmdir( path ):
     path.rmdir()
   return
 
+def cpdir( srcpath, dstpath ):
+  for child in srcpath.iterdir():
+    if child.is_dir():
+      c = Path(srcpath, child.name)
+      d = Path(dstpath, child.name)
+      d.mkdir(parents=True, exist_ok=True)
+      cpdir(c, d)
+    else:
+      c = PurePath(srcpath, child.name)
+      print(f"Copying {c} to {dstpath}")
+      copy2(c, dstpath)
+
 if args.clean:
   cwd = os.getcwd()
   clean_client(cwd)
@@ -59,12 +71,9 @@ if not args.nginx:
   print("Building 'mozias-nginx' image")
   os.chdir('mozias-client')
   print("Creating 'dist' directory")
-  Path('dist/js').mkdir(parents=True, exist_ok=True)
-  p = Path('src/static')
-  for child in p.iterdir():
-    c = PurePath('src/static', child.name)
-    print(f"Copying {c} to 'dist'")
-    copy2(c, 'dist')
+  srcpath = Path('src/static')
+  dstpath = Path('dist')
+  cpdir(srcpath, dstpath)
   print("Building 'app.js'")
   check_call(["elm", "make", "src/Main.elm", "--output=./dist/js/app.js"])
   os.chdir(cwd)
