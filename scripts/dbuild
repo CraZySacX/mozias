@@ -71,7 +71,7 @@ if not args.nginx:
   print("Building 'mozias-nginx' image")
   os.chdir('mozias-client')
   print("Creating 'dist' directory")
-  srcpath = Path('src/static')
+  srcpath = Path('static')
   dstpath = Path('dist')
   cpdir(srcpath, dstpath)
   print("Building 'app.js'")

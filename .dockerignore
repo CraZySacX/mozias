@@ -1,4 +1,3 @@
-target/
 .gitsecret
-dist/
-elm-stuff/
+**/target/*
+**/elm-stuff/*
