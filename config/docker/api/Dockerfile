@@ -14,7 +14,7 @@ COPY --from=builder \
     /home/rust/src/Rocket.toml \
     /
 COPY --from=builder \
-    /home/rust/src/scripts/wait-for-it.sh \
+    /home/rust/src/scripts/wait-for \
     /
 EXPOSE 8000
-CMD ["/wait-for-it.sh", "mozias_db:3306", "--", "/opt/mozias-api/bin/mozias-api"]
+CMD ["/wait-for", "mozias_db:3306", "--", "/opt/mozias-api/bin/mozias-api"]
